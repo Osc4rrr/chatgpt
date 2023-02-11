@@ -2,16 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
-const port = 3080;
+const dotenv = require('dotenv');
+
 const { Configuration, OpenAIApi } = require('openai');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
+dotenv.config();
+const port = process.env.PORT;
 const configuration = new Configuration({
-  organization: 'org-CmNDULl3Qv8jKJH7ifaLdasJ',
-  apiKey: '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',
+  organization: process.env.OPEN_AI_ORG_KEY,
+  apiKey: process.env.OPEN_AI_TOKEN,
 });
 
 const openai = new OpenAIApi(configuration);
@@ -20,8 +22,6 @@ const openai = new OpenAIApi(configuration);
 app.post('/', async (req, res) => {
   const { messages, currentModel } = req.body;
 
-  console.log(messages);
-  console.log(currentModel);
   const response = await openai.createCompletion({
     model: `${currentModel}`,
     prompt: `${messages}`,
